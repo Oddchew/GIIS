@@ -1,7 +1,7 @@
 import pygame as pg
 BLACK = (0, 0, 0)
 
-def DDA(x1: float, y1: float, x2: float, y2: float) -> list[tuple[int,int]]:
+def DDA(x1: int, y1: int, x2: int, y2: int) -> list[tuple[int,int]]:
     """
     Генерирует пиксели отрезка цифровым дифференциальным анализатором.
     """
