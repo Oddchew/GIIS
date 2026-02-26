@@ -10,11 +10,27 @@ WHITE = (255,255,255)
 FONT_SIZE = 20
 MAX_VALUES_ON_SCREEN = 30
 DEBUG_POSITION = (1000, 50)
+FIELD_RECT = (200, 50, 700, 500)
+SCALE = 10
 ByRadius = 1
+
+
+def position_translator(pos):
+    x = int((pos[0] - FIELD_RECT[0])/SCALE)
+    y = int((pos[1] - FIELD_RECT[1])/SCALE)
+    return (x, y)
+
+def draw_grid(screen):
+    for x in range(FIELD_RECT[0], FIELD_RECT[0] + FIELD_RECT[2], SCALE):
+        pg.draw.line(screen, (200, 200, 200), (x, FIELD_RECT[1]), (x, FIELD_RECT[1] + FIELD_RECT[3]))
+    for y in range(FIELD_RECT[1], FIELD_RECT[1] + FIELD_RECT[3], SCALE):
+        pg.draw.line(screen, (200, 200, 200), (FIELD_RECT[0], y), (FIELD_RECT[0] + FIELD_RECT[2], y))
+
 
 def draw_line(points, screen):
     for point in points:
-        pg.draw.circle(screen, BLACK, point, radius=1)
+        rect = pg.Rect((FIELD_RECT[0] + SCALE * point[0] , FIELD_RECT[1] + SCALE * point[1], SCALE, SCALE))
+        pg.draw.rect(screen, BLACK, rect)
 
 def draw_debug(points: list, screen: pg.Surface, position: tuple, scroll_offset: int) -> None:
     """
@@ -59,8 +75,8 @@ button_debug = button((10, 290, 180,50), "Отладка")
 screen = pg.display.set_mode(SIZE)
 pg.display.set_caption(NAME)
 clock = pg.time.Clock()
-field = pg.Rect(200, 50, 700, 500)
-lines = []
+field = pg.Rect(FIELD_RECT)
+lines :list[list[tuple[float, float]]] = []  
 mode = "DDA"
 is_By_pressed = False
 is_debug_pressed = False
@@ -97,10 +113,10 @@ while(run):
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             if field.collidepoint(event.pos):
                 if start_pos is None:
-                    start_pos = event.pos
+                    start_pos = position_translator(event.pos)
 
                 elif end_pos is None:
-                    end_pos = event.pos
+                    end_pos = position_translator(event.pos)
 
                     if mode == "DDA":
                         points = DDA(start_pos[0], start_pos[1], end_pos[0], end_pos[1])
@@ -134,9 +150,12 @@ while(run):
     button_By.draw(screen=screen, pressed=is_By_pressed)
     button_debug.draw(screen=screen, pressed= is_debug_pressed)
 
-    if is_debug_pressed and lines:
-        points = lines[-1]
-        draw_debug(points, screen, position=DEBUG_POSITION, scroll_offset=scroll_offset)
+    if is_debug_pressed:
+        draw_grid(screen)
+        
+        if lines:
+            points = lines[-1]
+            draw_debug(points, screen, position=DEBUG_POSITION, scroll_offset=scroll_offset)
 
     pg.display.flip()
     clock.tick(60)
