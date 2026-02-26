@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 def bresenham_pixels(x0: int, y0: int, x1: int, y1: int) -> list[tuple[int, int]]:
     """
     Генерирует пиксели отрезка по Брезенхему.
