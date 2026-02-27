@@ -28,14 +28,14 @@ def draw_grid(screen):
 
 def draw_line(points, screen):
     for point in points:
-        if len(point) == 3:  # Если это точка с яркостью
+        if len(point) == 3:  
             x, y, brightness = point
             alpha = int(255 * brightness)
             color = (0, 0, 0, alpha)
             s = pg.Surface((SCALE, SCALE), pg.SRCALPHA)
             s.fill(color)
             screen.blit(s, (FIELD_RECT[0] + SCALE * x, FIELD_RECT[1] + SCALE * y))
-        else:  # Если это обычная точка
+        else:  
             x, y = point
             rect = pg.Rect((FIELD_RECT[0] + SCALE * x, FIELD_RECT[1] + SCALE * y, SCALE, SCALE))
             pg.draw.rect(screen, BLACK, rect)
@@ -106,7 +106,7 @@ while run:
             mode = "DDA"
 
         if button_bresenhem.is_press(event=event):
-            mode = "bresengem"
+            mode = "bresenhem"
 
         if button_By.is_press(event=event):
             mode = "By"
@@ -148,7 +148,7 @@ while run:
 
     button_clear.draw(screen=screen, pressed=False)
     button_dda.draw(screen=screen, pressed=mode == "DDA")
-    button_bresenhem.draw(screen=screen, pressed=mode == "bresengem")
+    button_bresenhem.draw(screen=screen, pressed=mode == "bresenhem")
     button_By.draw(screen=screen, pressed=mode == "By")
     button_debug.draw(screen=screen, pressed=is_debug_pressed)
 

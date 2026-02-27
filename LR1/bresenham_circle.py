@@ -33,7 +33,6 @@ def draw_by_line(x0: int, y0: int, x1: int, y1: int) -> list[tuple[int, int, flo
 
     gradient = dy / dx
 
-    # Обработка начальной точки
     xend = round(x0)
     yend = y0 + gradient * (xend - x0)
     xgap = rfpart(x0 + 0.5)
@@ -47,7 +46,6 @@ def draw_by_line(x0: int, y0: int, x1: int, y1: int) -> list[tuple[int, int, flo
         plot(pixels, xpxl1, ypxl1, rfpart(yend) * xgap)
         plot(pixels, xpxl1, ypxl1 + 1, fpart(yend) * xgap)
 
-    # Обработка конечной точки
     xend = round(x1)
     yend = y1 + gradient * (xend - x1)
     xgap = fpart(x1 + 0.5)
@@ -61,7 +59,6 @@ def draw_by_line(x0: int, y0: int, x1: int, y1: int) -> list[tuple[int, int, flo
         plot(pixels, xpxl2, ypxl2, rfpart(yend) * xgap)
         plot(pixels, xpxl2, ypxl2 + 1, fpart(yend) * xgap)
 
-    # Основной цикл
     if steep:
         for x in range(xpxl1 + 1, xpxl2):
             intery = y0 + gradient * (x - x0)
