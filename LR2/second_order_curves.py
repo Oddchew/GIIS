@@ -66,43 +66,106 @@ class SecondOrderCurves:
         return points
 
     @staticmethod
-    def hyperbola(a, b, steps=200):
+    def hyperbola(c_x, c_y, a, b):
         """
-        Генерация гиперболы.
-        Возвращает список точек, принадлежащих гиперболе во всех четвертях.
+        Алгоритм Брезенхема для генерации гиперболы с центром (c_x, c_y).
+        Рисует обе ветви (правую и левую) во всех четырёх четвертях.
         """
         points = []
-        if a <= 0 or b <= 0:
+        if a < 1:
             return points
 
-        # Правая и левая ветви гиперболы
-        for x in range(-steps, steps + 1):
-            if x != 0 and abs(x) >= a:
-                y_squared = b*b * ((x/a) ** 2 - 1)
-                if y_squared >= 0:
-                    y = math.sqrt(y_squared)
-                    points.extend([(x, int(y)), (x, int(-y))])
+        x0, y0 = c_x, c_y
+        x, y = a, 0
+        a2, b2 = a * a, b * b
+        d1 = b2 - a2 * 0.75
+
+        # Регион 1
+        while b2 * x > a2 * y:
+            # 4 симметричные точки: правая/левая ветвь, верх/низ
+            points.extend([
+                (x0 + x, y0 + y),
+                (x0 + x, y0 - y),
+                (x0 - x, y0 + y),
+                (x0 - x, y0 - y),
+            ])
+
+            if d1 < 0:
+                d1 += b2 * (2 * y + 3)
+            else:
+                d1 += b2 * (2 * y + 3) - a2 * (2 * x - 2)
+                x += 1
+            y += 1
+            if x > 10000 or y > 10000:
+                break
+
+        # Регион 2
+        d2 = b2 * (x + 0.5) ** 2 - a2 * (y + 1) ** 2 - a2 * b2
+        while x < 500:
+            points.extend([
+                (x0 + x, y0 + y),
+                (x0 + x, y0 - y),
+                (x0 - x, y0 + y),
+                (x0 - x, y0 - y),
+            ])
+
+            if d2 > 0:
+                d2 -= a2 * (2 * x - 3)
+            else:
+                d2 += b2 * (2 * y + 2) - a2 * (2 * x - 3)
+                y += 1
+            x += 1
+            if x > 10000 or y > 10000:
+                break
 
         return points
 
+
     @staticmethod
-    def parabola(p, steps=200):
+    def parabola(c_x, c_y, p):
         """
-        Генерация полной параболы с ветвями вверх и вниз.
-        Возвращает список точек, принадлежащих параболе.
+        Алгоритм Брезенхема для генерации параболы с вершиной в (c_x, c_y).
+        Рисует ветви вверх и вниз.
         """
         points = []
-        if p == 0:
+        if p < 1:
             return points
 
-        elif p > 0:
-            for x in range(-steps, steps + 1):
-                y = (x ** 2) / (2 * abs(p))
-                points.append((x, int(y)))
+        x0, y0 = c_x, c_y
+        x, y = 0, 0
+        d = 1.0 - 2.0 * p
 
-        elif p < 0:
-            for x in range(-steps, steps + 1):
-                y = -(x ** 2) / (2 * abs(p))
-                points.append((x, int(y)))
+        # Регион 1
+        while x * x < 4 * p * y:
+            points.extend([
+                (x0 + x, y0 + y),  # вверх
+                (x0 + x, y0 - y),  # вниз
+                (x0 - x, y0 + y),
+                (x0 - x, y0 - y),
+            ])
+
+            if d < 0:
+                d += 2 * x + 3
+            else:
+                d += 2 * x + 3 - 4 * p
+                y += 1
+            x += 1
+
+        # Регион 2
+        d2 = (x + 0.5) ** 2 - 4.0 * p * (y + 1)
+        while y < 10000:
+            points.extend([
+                (x0 + x, y0 + y),
+                (x0 + x, y0 - y),
+                (x0 - x, y0 + y),
+                (x0 - x, y0 - y),
+            ])
+
+            if d2 > 0:
+                d2 += -4.0 * p + 2
+            else:
+                d2 += 2 * x - 4.0 * p + 2
+                x += 1
+            y += 1
 
         return points

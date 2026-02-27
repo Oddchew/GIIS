@@ -150,23 +150,24 @@ while run:
                     else:
                         a = abs(position_translator(event.pos)[0] - center[0]) // 2
                         b = abs(position_translator(event.pos)[1] - center[1]) // 2
-                        points = curves.hyperbola(a, b)
-                        translated_points = [(point[0] + center[0], point[1] + center[1]) for point in points]
-                        lines.append(translated_points)
+                        points = curves.hyperbola(center[0], center[1], a, b)
+                        lines.append(points)
                         center = None
                         a = 0
                         b = 0
+
 
                 elif mode == "parabola":
                     if center is None:
                         center = position_translator(event.pos)
                     else:
                         p = position_translator(event.pos)[0] - center[0]
-                        points = curves.parabola(p)
-                        translated_points = [(point[0] + center[0], point[1] + center[1]) for point in points]
-                        lines.append(translated_points)
+                        p = abs(p)  # чтобы точно было > 0
+                        points = curves.parabola(center[0], center[1], p)
+                        lines.append(points)
                         center = None
                         p = 0
+
 
                 scroll_offset = 0
 
