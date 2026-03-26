@@ -1,0 +1,11 @@
+SIZE = (1400, 820)         
+NAME = "Графический редактор — Полигоны"
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+FONT_SIZE = 20
+MAX_VALUES_ON_SCREEN = 30
+DEBUG_POSITION = (1000, 50)
+FIELD_RECT = (300, 50, 700, 500)
+SCALE = 5
