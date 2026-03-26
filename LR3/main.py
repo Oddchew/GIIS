@@ -1,6 +1,6 @@
 import pygame as pg
 from button import button
-from algoritms import InterpolationCurves
+from LR3.algorithms import InterpolationCurves
 
 
 SIZE = (1200, 600)
@@ -114,15 +114,14 @@ field = pg.Rect(FIELD_RECT)
 
 interp_curves = InterpolationCurves()
 
-curves = []  # list of dict {'type': str, 'controls': list, 'points': list}
+curves = []
 mode = None
 is_debug_pressed = False
 is_edit_pressed = False
 scroll_offset = 0
 current_controls = []
-selected = None  # (curve_idx, control_idx)
+selected = None
 
-# новое: флаги драга
 dragging = False
 drag_offset = (0, 0)
 
@@ -163,7 +162,6 @@ while run:
             mode = "bspline"
             current_controls = []
 
-        # Режим ввода новых точек (когда не редактируем)
         if not is_edit_pressed:
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 if field.collidepoint(event.pos):
@@ -171,7 +169,6 @@ while run:
                     if mode in ["hermite", "bezier", "bspline"]:
                         current_controls.append(pos)
 
-        # Завершение кривой и генерация точек
         if button_finish.is_press(event=event):
             if mode == "hermite":
                 if len(current_controls) >= 4:
@@ -216,7 +213,6 @@ while run:
                     current_controls = []
                     scroll_offset = 0
 
-        # Скролл отладочной панели
         if event.type == pg.MOUSEWHEEL:
             if is_debug_pressed and curves:
                 scroll_offset -= event.y * 10
@@ -225,7 +221,6 @@ while run:
                 )
                 scroll_offset = max(0, scroll_offset)
 
-        # --- РЕЖИМ РЕДАКТИРОВАНИЯ: выбор точки для драга ---
         if is_edit_pressed and event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             if field.collidepoint(event.pos):
                 click_pos = event.pos
@@ -249,15 +244,12 @@ while run:
                     selected = None
                     dragging = False
 
-        # --- РЕЖИМ РЕДАКТИРОВАНИЯ: перетаскивание точки ---
         if is_edit_pressed and event.type == pg.MOUSEMOTION and dragging and selected is not None:
             pos = (event.pos[0] + drag_offset[0], event.pos[1] + drag_offset[1])
 
-            # координата в системе поля
             snap_coord = position_translator(pos)
             min_snap_dist = float("inf")
 
-            # привязка к точкам других кривых (controls и points)
             for c_idx, curve in enumerate(curves):
                 if c_idx != selected[0]:
                     for point in curve["controls"]:
@@ -273,10 +265,8 @@ while run:
                             min_snap_dist = d
                             snap_coord = point
 
-            # обновляем контрольную точку
             curves[selected[0]]["controls"][selected[1]] = snap_coord
 
-            # пересчёт кривой
             curve = curves[selected[0]]
             typ = curve["type"]
             controls = curve["controls"]
@@ -293,23 +283,19 @@ while run:
             elif typ == "bspline":
                 curve["points"] = interp_curves.b_spline(controls)
 
-        # --- РЕЖИМ РЕДАКТИРОВАНИЯ: отпускание точки ---
         if is_edit_pressed and event.type == pg.MOUSEBUTTONUP and event.button == 1:
             dragging = False
             selected = None
 
-    # Отрисовка кривых
     for curve in curves:
         draw_points(curve["points"], screen)
 
-    # Отрисовка опорных точек
     if not is_edit_pressed:
         draw_points(current_controls, screen, color=RED, is_controls=True)
     else:
         for curve in curves:
             draw_points(curve["controls"], screen, color=RED, is_controls=True)
 
-    # Кнопки
     button_clear.draw(screen=screen, pressed=False)
     button_debug.draw(screen=screen, pressed=is_debug_pressed)
     button_hermite.draw(screen=screen, pressed=mode == "hermite")

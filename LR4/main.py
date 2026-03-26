@@ -3,7 +3,7 @@ import sys
 
 from drawer import draw_edges, draw_help, draw_vertices
 from button import button
-from algoritms import Transform3D
+from algorithms import Transform3D
 from consts import SIZE, NAME, FIELD_RECT, FONT_SIZE, WHITE, GRAY, BLACK
 
 def load_object(filename="object.txt"):
@@ -52,7 +52,6 @@ current_vertices = [list(p) for p in vertices]
 
 button_clear = button((20, 20, 200, 50), "Сбросить")
 button_load = button((20, 90, 200, 50), "Загрузить файл")
-button_exit = button((20, 160, 200, 50), "Выход")
 
 angle_step = 0.2
 scale_step = 0.2
@@ -74,9 +73,6 @@ while run:
         if button_load.is_press(event):
             vertices, edges = load_object()
             current_vertices = [list(p) for p in vertices]
-
-        if button_exit.is_press(event):
-            run = False
 
         if event.type == pg.KEYDOWN:
             mats = []
@@ -148,7 +144,6 @@ while run:
 
     button_clear.draw(screen, False)
     button_load.draw(screen, False)
-    button_exit.draw(screen, False)
 
     draw_help(screen)
 

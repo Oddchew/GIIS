@@ -1,4 +1,3 @@
-# interpolation_curves.py
 class InterpolationCurves:
     def matrix_vector_multiply(self, matrix, vector):
         """
