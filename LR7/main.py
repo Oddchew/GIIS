@@ -48,7 +48,7 @@ while run:
                 # Нам нужно пересчитать triangles без обрезки для voronoi_from_delaunay или изменить voronoi_from_delaunay
                 raw_triangles = get_raw_triangles(points)
                 voronoi_edges = voronoi_from_delaunay(points, raw_triangles)
-                result_text = f"Триангуляция Делоне: {len(triangles)} треугольников"
+                result_text = f"Триангуляция Делоне: {len(raw_triangles)} треугольников"
 
         if btn_voronoi.is_press(event):
             mode = "Voronoi"
