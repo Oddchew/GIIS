@@ -16,11 +16,9 @@ def draw_points(points, screen):
         pg.draw.circle(screen, (0, 0, 0), (cx, cy), SCALE // 2 + 1)
 
 def draw_delaunay(triangles, screen):
-    for tri in triangles:
-        for i in range(3):
-            p1 = tri[i]
-            p2 = tri[(i + 1) % 3]
-            line = bresenham_pixels(p1[0], p1[1], p2[0], p2[1])  # из algorithms
+    for tri_edges in triangles:
+        for p1, p2 in tri_edges:
+            line = bresenham_pixels(p1[0], p1[1], p2[0], p2[1])
             draw_line(line, screen, BLUE)
 
 def draw_voronoi(voronoi_edges, screen):
