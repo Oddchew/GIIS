@@ -1,7 +1,7 @@
 import pygame as pg
 from consts import *
 from button import button
-from algorithms import delaunay_triangulation, voronoi_from_delaunay
+from algorithms import delaunay_triangulation, voronoi_from_delaunay, get_raw_triangles
 from bresenham import  bresenham_pixels
 from drawer import draw_points, draw_delaunay, draw_voronoi
 
@@ -43,14 +43,19 @@ while run:
             mode = "Delaunay"
             if len(points) >= 3:
                 triangles = delaunay_triangulation(points)
-                voronoi_edges = voronoi_from_delaunay(points, triangles)
+                # Передаем оригинальные точки для Вороного, если нужно, или используем triangles
+                # Но triangles теперь содержит рёбра.
+                # Нам нужно пересчитать triangles без обрезки для voronoi_from_delaunay или изменить voronoi_from_delaunay
+                raw_triangles = get_raw_triangles(points)
+                voronoi_edges = voronoi_from_delaunay(points, raw_triangles)
                 result_text = f"Триангуляция Делоне: {len(triangles)} треугольников"
 
         if btn_voronoi.is_press(event):
             mode = "Voronoi"
             if len(points) >= 3:
                 triangles = delaunay_triangulation(points)
-                voronoi_edges = voronoi_from_delaunay(points, triangles)
+                raw_triangles = get_raw_triangles(points)
+                voronoi_edges = voronoi_from_delaunay(points, raw_triangles)
                 result_text = "Диаграмма Вороного построена"
 
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
@@ -61,7 +66,8 @@ while run:
                     points.append((x, y))
                     if len(points) >= 3:
                         triangles = delaunay_triangulation(points)
-                        voronoi_edges = voronoi_from_delaunay(points, triangles)
+                        raw_triangles = get_raw_triangles(points)
+                        voronoi_edges = voronoi_from_delaunay(points, raw_triangles)
 
     # Отрисовка
     draw_points(points, screen)
