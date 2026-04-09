@@ -15,11 +15,10 @@ def draw_points(points, screen):
         cy = FIELD_RECT[1] + SCALE * py + SCALE // 2
         pg.draw.circle(screen, (0, 0, 0), (cx, cy), SCALE // 2 + 1)
 
-def draw_delaunay(triangles, screen):
-    for tri_edges in triangles:
-        for p1, p2 in tri_edges:
-            line = bresenham_pixels(p1[0], p1[1], p2[0], p2[1])
-            draw_line(line, screen, BLUE)
+def draw_delaunay(edges, screen):
+    for p1, p2 in edges:
+        line = bresenham_pixels(p1[0], p1[1], p2[0], p2[1])
+        draw_line(line, screen, BLUE)
 
 def draw_voronoi(voronoi_edges, screen):
     for p1, p2 in voronoi_edges:

@@ -83,22 +83,23 @@ def get_raw_triangles(points):
     return list(set(final_triangles))
 
 def delaunay_triangulation(points):
-    """Возвращает список обрезанных ребер треугольников"""
+    """Возвращает список уникальных обрезанных ребер триангуляции"""
     raw_triangles = get_raw_triangles(points)
 
-    # Обрезание рёбер границами поля
-    clipped_triangles = []
+    unique_edges = set()
     for t in raw_triangles:
-        edges = []
         for i in range(3):
-            p1, p2 = t[i], t[(i+1)%3]
-            clipped = cohen_sutherland_clip(p1[0], p1[1], p2[0], p2[1], 0, 0, FIELD_X_MAX, FIELD_Y_MAX)
-            if clipped:
-                edges.append(clipped)
-        if edges:
-            clipped_triangles.append(tuple(edges))
+            edge = tuple(sorted((t[i], t[(i+1)%3])))
+            unique_edges.add(edge)
 
-    return clipped_triangles
+    # Обрезание рёбер границами поля
+    clipped_edges = []
+    for p1, p2 in unique_edges:
+        clipped = cohen_sutherland_clip(p1[0], p1[1], p2[0], p2[1], 0, 0, FIELD_X_MAX, FIELD_Y_MAX)
+        if clipped:
+            clipped_edges.append(clipped)
+
+    return clipped_edges
 
 def voronoi_from_delaunay(points, triangles):
     """
